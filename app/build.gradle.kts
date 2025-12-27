@@ -37,6 +37,16 @@ android {
     buildFeatures {
         compose = true
     }
+
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    aaptOptions {
+        noCompress("tflite")
+    }
 }
 
 dependencies {
@@ -49,6 +59,28 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.tools.core)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    // ML & JSON
+    implementation(libs.tensorflow.lite.task.vision)
+    implementation(libs.tensorflow.lite.gpu)
+    implementation(libs.gson)
+
+    // CameraX
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

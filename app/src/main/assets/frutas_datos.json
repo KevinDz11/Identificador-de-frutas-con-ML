@@ -1,0 +1,22 @@
+[
+  {
+    "nombre": "Tomato",
+    "almacenamiento": "Frutero",
+    "tipAlmacenamiento": "No refrigerar, pierden sabor y su textura se vuelve harinosa.",
+    "tiempoVida": "5-7 días",
+    "esTemporada": true,
+    "indiceGlucemico": "Bajo (15)",
+    "superPoder": "Alto en Licopeno: excelente para la salud del corazón.",
+    "precioReferencia": 28.50
+  },
+  {
+    "nombre": "Banana",
+    "almacenamiento": "Frutero (Separado)",
+    "tipAlmacenamiento": "Mantenlas lejos de otras frutas si no quieres que maduren rápido.",
+    "tiempoVida": "3-5 días",
+    "esTemporada": true,
+    "indiceGlucemico": "Medio (51)",
+    "superPoder": "Potasio: ayuda a evitar calambres musculares.",
+    "precioReferencia": 22.00
+  }
+]
