@@ -104,10 +104,10 @@ fun CameraScreen(viewModel: ScannerViewModel = viewModel()) {
     }
 }
 
-fun ImageProxy.toBitmap(): Bitmap? {
-    val buffer = planes[0].buffer
-    buffer.rewind()
-    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-    bitmap.copyPixelsFromBuffer(buffer)
-    return bitmap
-}
+//fun ImageProxy.toBitmap(): Bitmap? {
+//    val buffer = planes[0].buffer
+//    buffer.rewind()
+//    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+//    bitmap.copyPixelsFromBuffer(buffer)
+//    return bitmap
+//}
