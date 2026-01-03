@@ -13,6 +13,8 @@ import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import android.util.Log
 import org.tensorflow.lite.support.image.ops.Rot90Op
+import org.tensorflow.lite.support.common.ops.CastOp
+import org.tensorflow.lite.DataType
 
 class ImageClassifierHelper(val context: Context, val classifierListener: ClassifierListener?) {
     private var interpreter: Interpreter? = null
@@ -59,7 +61,8 @@ class ImageClassifierHelper(val context: Context, val classifierListener: Classi
             .add(Rot90Op(-rotation / 90))
             .add(ResizeOp(224, 224, ResizeOp.ResizeMethod.BILINEAR))
             // 2. Probamos con normalización estándar (0 a 1)
-            .add(NormalizeOp(0f, 255f))
+            //.add(NormalizeOp(0f, 255f))
+            .add(CastOp(DataType.FLOAT32))
             .build()
 
         val tensorImage = imageProcessor.process(TensorImage.fromBitmap(bitmap))
