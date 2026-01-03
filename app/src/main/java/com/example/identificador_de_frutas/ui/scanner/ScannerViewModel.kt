@@ -9,7 +9,6 @@ import com.example.identificador_de_frutas.ml.ImageClassifierHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.tensorflow.lite.task.vision.classifier.Classifications
 
 /**
  * ViewModel encargado de gestionar el estado del escáner y la información de la fruta detectada.
@@ -17,17 +16,19 @@ import org.tensorflow.lite.task.vision.classifier.Classifications
 class ScannerViewModel(application: Application) : AndroidViewModel(application), ImageClassifierHelper.ClassifierListener {
 
     private val repository = FrutaRepository(application)
-    private val classifierHelper = ImageClassifierHelper(application, this)
 
-    // Estado para la UI: La fruta detectada actualmente con su información extra
+    // Declaramos los estados de la UI PRIMERO.
     private val _uiState = MutableStateFlow<ScannerUiState>(ScannerUiState.Empty)
     val uiState: StateFlow<ScannerUiState> = _uiState.asStateFlow()
+
+    // El helper se inicializa después de que los estados están listos
+    private val classifierHelper = ImageClassifierHelper(application, this)
 
     /**
      * Función que recibe un frame de la cámara (en formato Bitmap) y lo procesa.
      */
-    fun onFrameCaptured(bitmap: Bitmap) {
-        classifierHelper.classify(bitmap)
+    fun onFrameCaptured(bitmap: Bitmap, rotation: Int) {
+        classifierHelper.classify(bitmap, rotation)
     }
 
     // --- Implementación de ClassifierListener ---
@@ -36,21 +37,17 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
         _uiState.value = ScannerUiState.Error(error)
     }
 
-    override fun onResults(results: List<Classifications>?, inferenceTime: Long) {
-        val result = results?.firstOrNull()?.categories?.firstOrNull()
-
-        if (result != null && result.score > 0.5f) {
-            val nombreDetectado = result.label
-            val infoExtra = repository.obtenerInfoPorNombre(nombreDetectado)
+    // CORRECCIÓN: La firma debe coincidir exactamente con la del ImageClassifierHelper corregido
+    override fun onResults(label: String, score: Float, inferenceTime: Long) {
+        // Solo procesamos si la confianza es mayor al 50%
+        if (score > 0.1f) {
+            val infoExtra = repository.obtenerInfoPorNombre(label)
 
             _uiState.value = ScannerUiState.Success(
-                nombre = nombreDetectado,
-                confianza = result.score,
+                nombre = label,
+                confianza = score,
                 datosExtra = infoExtra
             )
-        } else {
-            // Si no detecta nada claro, podemos mantener el estado previo o limpiar
-            // _uiState.value = ScannerUiState.Empty
         }
     }
 }
@@ -60,10 +57,12 @@ class ScannerViewModel(application: Application) : AndroidViewModel(application)
  */
 sealed class ScannerUiState {
     object Empty : ScannerUiState()
+
     data class Success(
         val nombre: String,
         val confianza: Float,
         val datosExtra: FrutaInfo?
     ) : ScannerUiState()
+
     data class Error(val message: String) : ScannerUiState()
 }

@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.identificador_de_frutas"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.identificador_de_frutas"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -59,7 +59,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.tools.core)
+    //implementation(libs.androidx.tools.core)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,6 +70,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // ML & JSON
+    implementation(libs.tensorflow.lite)
+    implementation(libs.tensorflow.lite.support)
     implementation(libs.tensorflow.lite.task.vision)
     implementation(libs.tensorflow.lite.gpu)
     implementation(libs.gson)

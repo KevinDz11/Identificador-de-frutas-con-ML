@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -16,61 +18,52 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import java.util.concurrent.Executor
+import com.example.identificador_de_frutas.data.FrutaInfo // Import crucial
 import java.util.concurrent.Executors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CameraScreen(
-    viewModel: ScannerViewModel = viewModel()
-) {
+fun CameraScreen(viewModel: ScannerViewModel = viewModel()) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsState()
-
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
 
     Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Escáner de Frutas") })
-        }
+        topBar = { TopAppBar(title = { Text("Escáner de Frutas") }) }
     ) { padding ->
         Box(modifier = Modifier.padding(padding).fillMaxSize()) {
-            // 1. Vista de la Cámara
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
                 factory = { ctx ->
-                    PreviewView(ctx).apply {
+                    val previewView = PreviewView(ctx).apply {
                         implementationMode = PreviewView.ImplementationMode.COMPATIBLE
                     }
-                },
-                update = { previewView ->
-                    val cameraProviderFuture = androidx.camera.lifecycle.ProcessCameraProvider.getInstance(context)
+                    val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
 
                     cameraProviderFuture.addListener({
-                        val cameraProvider = cameraProviderFuture.get()
-
-                        // Configuración del Preview
-                        val preview = androidx.camera.core.Preview.Builder().build().also {
-                            it.setSurfaceProvider(previewView.surfaceProvider)
-                        }
-
-                        // Configuración del Analizador de Imágenes (IA)
-                        val imageAnalyzer = ImageAnalysis.Builder()
-                            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                            .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-                            .build()
-                            .also {
-                                it.setAnalyzer(cameraExecutor) { imageProxy ->
-                                    val bitmap = imageProxy.toBitmap()
-                                    if (bitmap != null) {
-                                        viewModel.onFrameCaptured(bitmap)
-                                    }
-                                    imageProxy.close()
-                                }
+                        try {
+                            val cameraProvider = cameraProviderFuture.get()
+                            val preview = Preview.Builder().build().also {
+                                it.setSurfaceProvider(previewView.surfaceProvider)
                             }
 
-                        try {
+                            val imageAnalyzer = ImageAnalysis.Builder()
+                                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                                .build()
+                                .also {
+                                    it.setAnalyzer(cameraExecutor) { imageProxy ->
+                                        val rotation = imageProxy.imageInfo.rotationDegrees // Obtenemos la rotación (0, 90, 180, 270)
+                                        val bitmap = imageProxy.toBitmap()
+                                        if (bitmap != null) {
+                                            // Pasamos el bitmap Y la rotación
+                                            viewModel.onFrameCaptured(bitmap, rotation)
+                                        }
+                                        imageProxy.close()
+                                    }
+                                }
+
                             cameraProvider.unbindAll()
                             cameraProvider.bindToLifecycle(
                                 lifecycleOwner,
@@ -78,32 +71,23 @@ fun CameraScreen(
                                 preview,
                                 imageAnalyzer
                             )
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }, ContextCompat.getMainExecutor(context))
+                        } catch (e: Exception) { e.printStackTrace() }
+                    }, ContextCompat.getMainExecutor(ctx))
+                    previewView
                 }
             )
 
-            // 2. Superposición de información (Overlay)
+            // UI de información
             Card(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f)
-                )
+                modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(16.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.9f))
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     when (val state = uiState) {
                         is ScannerUiState.Success -> {
-                            Text(
-                                text = "Detectado: ${state.nombre}",
-                                style = MaterialTheme.typography.headlineSmall
-                            )
+                            Text("Detectado: ${state.nombre}", style = MaterialTheme.typography.headlineSmall)
                             state.datosExtra?.let { info ->
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Spacer(Modifier.height(8.dp))
                                 Text("📍 Almacenar en: ${info.almacenamiento}")
                                 Text("💡 Tip: ${info.tipAlmacenamiento}")
                                 Text("🍎 Superpoder: ${info.superPoder}")
@@ -111,12 +95,8 @@ fun CameraScreen(
                                 Text("💰 Precio aprox: $${info.precioReferencia}/kg")
                             }
                         }
-                        is ScannerUiState.Empty -> {
-                            Text("Apunta a una fruta para analizar")
-                        }
-                        is ScannerUiState.Error -> {
-                            Text("Error: ${state.message}", color = MaterialTheme.colorScheme.error)
-                        }
+                        is ScannerUiState.Empty -> Text("Apunta a una fruta para analizar")
+                        is ScannerUiState.Error -> Text("Error: ${state.message}", color = MaterialTheme.colorScheme.error)
                     }
                 }
             }
@@ -124,13 +104,10 @@ fun CameraScreen(
     }
 }
 
-// Extensión para convertir ImageProxy a Bitmap
 fun ImageProxy.toBitmap(): Bitmap? {
     val buffer = planes[0].buffer
-    val pixelData = ByteArray(buffer.remaining())
-    buffer.get(pixelData)
-    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     buffer.rewind()
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
     bitmap.copyPixelsFromBuffer(buffer)
     return bitmap
 }
