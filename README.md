@@ -52,3 +52,22 @@ Es el cimiento de la arquitectura MVVM, encargada de la persistencia y el proces
 * **FrutaRepository**: Centraliza el acceso a los datos. Lee el archivo JSON desde la carpeta de *assets* y lo convierte en objetos de Kotlin (`FrutaInfo`) para su uso en la interfaz.
 * **ImageClassifierHelper**: Encapsula la lógica de TensorFlow Lite. Su función es aislar la complejidad de cargar el archivo `.tflite`, configurar los hilos del CPU (*threads*) y ejecutar la inferencia.
 * **Data Classes**: Define estructuras de datos estrictas que aseguran que la información (precio, superpoder, tips) se maneje de forma segura y sin errores en toda la aplicación.
+
+![11](https://github.com/user-attachments/assets/075abe31-78b3-49c1-9836-f4e46d6e0f6b)
+![111](https://github.com/user-attachments/assets/a79897da-3ea4-4c1b-bf1b-f912d4a6df30)
+![1111](https://github.com/user-attachments/assets/921d892a-b24e-4f97-b33c-429d54b98f94)
+
+
+##  Conclusiones
+
+Este proyecto fue desarrollado colaborativamente por:
+1. **Beltrán Vidal Sol Jarelly**
+2. **De la Vega Marquez Anuar**
+3. **Diaz Fuentes Kevin**
+* integrando diversas áreas de la ingeniería de software y la inteligencia artificial. Las principales conclusiones de nuestro desarrollo son:
+
+1. **Sinergia entre ML y Desarrollo Móvil**: Logramos demostrar que la integración de modelos complejos como *Efficient_v3* en dispositivos móviles es viable y eficiente gracias a herramientas como **TFLite Support Library**, permitiendo experiencias de usuario fluidas sin dependencia de la nube.
+2. **Arquitectura Escalable**: La implementación del patrón **MVVM** facilitó la división de tareas entre los 3 integrantes, permitiendo trabajar simultáneamente en la lógica de la cámara, el procesamiento de datos JSON y la interfaz en Jetpack Compose sin conflictos de código.
+3. **Impacto en el Usuario**: Más allá de la clasificación técnica, el valor real del proyecto reside en la democratización del conocimiento nutricional y de conservación, transformando un simple identificador de imágenes en una herramienta de consumo responsable.
+4. **Optimización de Recursos**: El uso de **CameraX Analysis API** fue fundamental para equilibrar el rendimiento del hardware; logramos un análisis constante de frames manteniendo la estabilidad térmica y de batería del dispositivo.
+
