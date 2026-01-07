@@ -1,6 +1,6 @@
 # Identificador de Frutas y Verduras con Machine Learning
 
-Este proyecto es una aplicación Android nativa diseñada para identificar diversos tipos de frutas y verduras en tiempo real utilizando la cámara del dispositivo y modelos de Inteligencia Artificial. Además de la identificación, la app ofrece información valiosa sobre conservación, nutrición y costos.
+Este proyecto es una aplicación Android nativa diseñada para identificar diversos tipos de frutas y algunas verduras en tiempo real utilizando la cámara del dispositivo y modelos de Inteligencia Artificial. Además de la identificación, la app ofrece información valiosa sobre conservación, nutrición y costos.
 
 ---
 
