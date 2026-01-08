@@ -57,6 +57,16 @@ Es el cimiento de la arquitectura MVVM, encargada de la persistencia y el proces
 ![111](https://github.com/user-attachments/assets/a79897da-3ea4-4c1b-bf1b-f912d4a6df30)
 ![1111](https://github.com/user-attachments/assets/921d892a-b24e-4f97-b33c-429d54b98f94)
 
+---
+
+## Recursos
+
+Material complementario para visualizar el funcionamiento y la presentación del proyecto:
+
+* **Video Tutorial**: https://drive.google.com/drive/folders/1VmsLa1qUw7czctGPWIQvJJRRetgNZGCi?usp=sharing
+* **Presentación**: https://www.canva.com/design/DAG9lyLCIic/v08dWfKcLt4oOxUhw18eyg/view?utm_content=DAG9lyLCIic&utm_camp
+
+---
 
 ##  Conclusiones
 
