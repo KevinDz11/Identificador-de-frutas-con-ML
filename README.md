@@ -63,7 +63,7 @@ Es el cimiento de la arquitectura MVVM, encargada de la persistencia y el proces
 
 Material complementario para visualizar el funcionamiento y la presentación del proyecto:
 
-* **Video Tutorial**: https://drive.google.com/drive/folders/1VmsLa1qUw7czctGPWIQvJJRRetgNZGCi?usp=sharing
+* **Video Tutorial**: https://www.youtube.com/watch?v=5GjMJrkjf7g
 * **Presentación**: https://www.canva.com/design/DAG9lyLCIic/v08dWfKcLt4oOxUhw18eyg/view?utm_content=DAG9lyLCIic&utm_camp
 
 ---
